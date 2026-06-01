@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>今日股票观察表</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --blue: #1d4b7b;
+      --orange: #e87511;
+      --green: #0f766e;
+      --red: #b91c1c;
+      --yellow-bg: #fff7ed;
+      --red-bg: #fef2f2;
+      --green-bg: #ecfdf5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #eef4fb 0%, var(--bg) 42%, #ffffff 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+
+    .hero {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 14px 40px rgba(29, 75, 123, 0.08);
+      border: 1px solid rgba(29, 75, 123, 0.08);
+      margin-bottom: 22px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .date-badge {
+      background: var(--blue);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .summary-card {
+      border-radius: 18px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .summary-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .focus {
+      background: var(--green-bg);
+    }
+
+    .risk {
+      background: var(--red-bg);
+    }
+
+    .table-wrap {
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    th, td {
+      padding: 15px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+
+    th {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .stock-name {
+      font-weight: 800;
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .tag-core {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .tag-risk {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .tag-normal {
+      background: #eff6ff;
+      color: var(--blue);
+    }
+
+    .price {
+      font-weight: 800;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+
+    .note {
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .disclaimer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap {
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        overflow: visible;
+      }
+
+      table, thead, tbody, tr, th, td {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody tr {
+        background: var(--card);
+        margin-bottom: 16px;
+        border-radius: 20px;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 16px;
+      }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      .stock-name {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>今日股票观察表</h1>
+          <p class="subtitle">记录当日操作要点、低吸区间、高抛区间与重点观察位置。</p>
+        </div>
+        <div class="date-badge">更新日期：2026-05-28</div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-card focus">
+          <strong>重点盯盘</strong>
+          <p>沪硅产业、盛合晶微、硕贝德。</p>
+        </div>
+        <div class="summary-card risk">
+          <strong>风险控制</strong>
+          <p>铜牛信息、爱司凯需优先控制仓位。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>股票名称和代码</th>
+            <th>分类</th>
+            <th>当日操作策略</th>
+            <th>低吸价</th>
+            <th>高抛价</th>
+            <th>其他关注重点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">协和电子 605258</span></td>
+            <td data-label="分类"><span class="tag tag-normal">震荡偏强</span><br>有资金但不是最强票，可波段持有</td>
+            <td data-label="当日操作策略">不追高，回落不破 <span class="note">37</span> 可拿，冲到 <span class="note">39</span> 附近不放量先减仓。</td>
+            <td data-label="低吸价"><span class="price">36.8—37.2</span></td>
+            <td data-label="高抛价"><span class="price">38.8—39.5</span></td>
+            <td data-label="其他关注重点">看 37 是否守住</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">沪硅产业 688126</span></td>
+            <td data-label="分类"><span class="tag tag-core">重点盯盘</span><br>半导体强势核心，有主力，优势票</td>
+            <td data-label="当日操作策略">已大涨，适合持仓看冲高，不建议追；若冲高不封强势可分批止盈。</td>
+            <td data-label="低吸价"><span class="price">29.5—30.3</span></td>
+            <td data-label="高抛价"><span class="price">31.6—32.0</span></td>
+            <td data-label="其他关注重点">看 31.6 能否突破</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">思进智能 003025</span></td>
+            <td data-label="分类"><span class="tag tag-normal">反弹票</span><br>强度中等</td>
+            <td data-label="当日操作策略">只适合小仓位，15.3 附近不破可拿，冲 16 附近可减仓。</td>
+            <td data-label="低吸价"><span class="price">15.2—15.4</span></td>
+            <td data-label="高抛价"><span class="price">15.9—16.3</span></td>
+            <td data-label="其他关注重点">看 15.2 支撑</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">硕贝德 300322</span></td>
+            <td data-label="分类"><span class="tag tag-core">重点盯盘</span><br>弹性强，有短线资金，优势票</td>
+            <td data-label="当日操作策略">继续看多，但冲 35 附近要防回落；放量突破 35.5 再加，不突破先高抛。</td>
+            <td data-label="低吸价"><span class="price">33.0—33.5</span></td>
+            <td data-label="高抛价"><span class="price">35.0—35.8</span></td>
+            <td data-label="其他关注重点">看 35 压力</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">爱司凯 300521</span></td>
+            <td data-label="分类"><span class="tag tag-risk">风险控制</span><br>弱反弹，趋势仍偏弱</td>
+            <td data-label="当日操作策略">反弹优先减仓，不建议加仓；站不上 27 就先观望。</td>
+            <td data-label="低吸价"><span class="price">24.8—25.3</span></td>
+            <td data-label="高抛价"><span class="price">26.8—27.3</span></td>
+            <td data-label="其他关注重点">看 27 能否站稳</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">铜牛信息 300895</span></td>
+            <td data-label="分类"><span class="tag tag-risk">风险控制</span><br>高波动票，短线风险较大</td>
+            <td data-label="当日操作策略">已从高位回落，先减仓控风险；只有重新站回 68—70 才观察反弹。</td>
+            <td data-label="低吸价"><span class="price">63—65</span></td>
+            <td data-label="高抛价"><span class="price">68—70</span></td>
+            <td data-label="其他关注重点">跌破 63 要继续降仓</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">伯特利 603596</span></td>
+            <td data-label="分类"><span class="tag tag-normal">趋势修复</span><br>可中线观察</td>
+            <td data-label="当日操作策略">可轻仓持有，33 附近不破可守，冲 35 附近先看量能。</td>
+            <td data-label="低吸价"><span class="price">33.0—33.5</span></td>
+            <td data-label="高抛价"><span class="price">35.0—36.0</span></td>
+            <td data-label="其他关注重点">看 34.8 压力</td>
+          </tr>
+
+          <tr>
+            <td data-label="股票名称和代码"><span class="stock-name">盛合晶微 688820</span></td>
+            <td data-label="分类"><span class="tag tag-core">重点盯盘</span><br>半导体强趋势票，最强之一，可作为核心持仓</td>
+            <td data-label="当日操作策略">适合继续持有，不追高；回踩 210 附近不破可低吸，冲 225 上方可分批止盈。</td>
+            <td data-label="低吸价"><span class="price">205—212</span></td>
+            <td data-label="高抛价"><span class="price">225—235</span></td>
+            <td data-label="其他关注重点">看 215—220 能否站稳</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="disclaimer">仅作个人观察记录与朋友间交流，不构成投资建议。市场有风险，操作需谨慎。</p>
+  </main>
+</body>
+</html>
